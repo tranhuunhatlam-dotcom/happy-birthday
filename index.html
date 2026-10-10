@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Trang web chúc mừng sinh nhật Lê Thị Minh Thư - Chúc bạn tuổi mới ngập tràn niềm vui và may mắn!">
+  <title>Chúc Mừng Sinh Nhật Lê Thị Minh Thư! 🎂 Happy Birthday</title>
+  
+  <!-- Phông chữ Google Fonts tiếng Việt hiện đại và mềm mại -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas vẽ hiệu ứng pháo hoa giấy (confetti) toàn màn hình -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Nút điều khiển âm nhạc góc phải -->
+  <div class="music-controller">
+    <button id="music-btn" class="music-btn" title="Bật/Tắt nhạc" aria-label="Bật hoặc tắt nhạc">
+      <span class="music-icon" id="music-icon">🎵</span>
+      <span class="music-text" id="music-status-text">Bật nhạc</span>
+    </button>
+    <div id="music-hint" class="music-hint">Đang dùng giai điệu chuông sinh nhật! Thêm file <code>music.mp3</code> vào thư mục để đổi bài hát nhé.</div>
+    <!-- Thẻ audio phát nhạc (sẽ tự động nạp nguồn theo cấu hình trong script.js) -->
+    <audio id="birthday-audio" preload="none"></audio>
+  </div>
+
+  <!-- Nút chuyển theme sáng / nhẹ nhàng -->
+  <div class="sound-decorations" aria-hidden="true">
+    <div class="floating-balloon balloon-1">🎈</div>
+    <div class="floating-balloon balloon-2">🎈</div>
+    <div class="floating-star star-1">✨</div>
+    <div class="floating-star star-2">⭐</div>
+    <div class="floating-star star-3">🌟</div>
+  </div>
+
+  <!-- ==============================================
+       PHẦN 1: MÀN HÌNH MỞ ĐẦU (HERO OPENING)
+       ============================================== -->
+  <header id="intro-screen" class="screen-section active">
+    <div class="glass-card hero-card">
+      <div class="badge-tag">🎉 IT'S CELEBRATION TIME! 🎉</div>
+      
+      <!-- Dòng chữ HAPPY BIRTHDAY xuất hiện từng chữ -->
+      <h1 class="stagger-title" id="stagger-title" aria-label="HAPPY BIRTHDAY">
+        <!-- Chữ cái sẽ được render tự động bằng Javascript -->
+      </h1>
+
+      <!-- CHỖ THAY TÊN NGƯỜI NHẬN -->
+      <div class="recipient-badge">
+        <span class="sparkle-icon">✨</span>
+        <span class="recipient-name" id="display-recipient-name">LÊ THỊ MINH THƯ</span>
+        <span class="sparkle-icon">✨</span>
+      </div>
+
+      <p class="hero-subtext">
+        Hôm nay có một nhân vật chính siêu cấp đáng yêu cần được triệu hồi! 🚀<br>
+        Chào mừng <strong>Lê Thị Minh Thư</strong> bước sang tuổi mới rực rỡ và bùng nổ niềm vui!
+      </p>
+
+      <button id="open-gift-btn" class="primary-btn pulse-glow">
+        <span class="btn-icon">🎁</span> Mở món quà bí mật
+      </button>
+
+      <div class="scroll-down-hint">
+        <span>Khám phá điều bất ngờ bên dưới</span>
+        <div class="bounce-arrow">↓</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       NỘI DUNG CHÍNH (XUẤT HIỆN SAU KHI NHẤN NÚT)
+       ============================================== -->
+  <main id="main-content" class="main-content">
+    
+    <!-- ==============================================
+         PHẦN 2: BÁNH SINH NHẬT VÀ LỜI CHÚC
+         ============================================== -->
+    <section id="cake-wishes-section" class="content-section">
+      <div class="section-header">
+        <span class="tag-pill">🎂 Khoảnh khắc ước nguyện</span>
+        <h2>Thổi Nến Đón Tuổi Mới</h2>
+        <p>Ước một điều thật xịn sò rồi nhấn nút thổi nến nha!</p>
+      </div>
+
+      <div class="cake-wishes-grid">
+        <!-- Bánh sinh nhật tương tác -->
+        <div class="cake-container glass-card">
+          <div class="cake-wrapper" id="cake-wrapper">
+            <!-- Đĩa bánh -->
+            <div class="cake-plate"></div>
+            <!-- Tầng bánh dưới -->
+            <div class="cake-layer layer-bottom">
+              <div class="icing-decor"></div>
+              <div class="sprinkles"></div>
+            </div>
+            <!-- Tầng bánh trên -->
+            <div class="cake-layer layer-top">
+              <div class="icing-cream"></div>
+            </div>
+            <!-- Cây nến -->
+            <div class="candle-stick" id="candle-stick">
+              <div class="candle-stripe"></div>
+              <!-- Ngọn lửa -->
+              <div class="candle-flame active" id="candle-flame">
+                <div class="flame-glow"></div>
+              </div>
+              <!-- Khói khi thổi nến -->
+              <div class="candle-smoke" id="candle-smoke"></div>
+            </div>
+          </div>
+
+          <div class="cake-controls">
+            <button id="blow-candle-btn" class="action-btn">
+              <span class="btn-emoji">💨</span> <span id="candle-btn-text">Thổi nến ngay!</span>
+            </button>
+            <p id="candle-message" class="candle-message">Nến đang sáng, nhắm mắt ước 3 giây rồi thổi nhé!</p>
+          </div>
+        </div>
+
+        <!-- Khung Lời chúc bạn bè chân thành & sâu sắc -->
+        <div class="wishes-box glass-card">
+          <div class="wishes-badge">💌 Lời chúc từ một người bạn</div>
+          <h3 class="wishes-title">Gửi Minh Thư thân mến,</h3>
+          <div class="wishes-body">
+            <p id="wishes-text-content">
+              Chúc mừng sinh nhật Minh Thư nhé! 🎂🎉 Chúc cậu tuổi mới luôn bình an, vui vẻ, mạnh khỏe và gặp thật nhiều điều tốt đẹp trong cuộc sống. Mong rằng những dự định cậu ấp ủ đều sẽ dần trở thành hiện thực, những ngày không vui sẽ sớm qua đi và mỗi ngày đều có ít nhất một điều khiến cậu mỉm cười. Dù chúng mình mới quen nhau chưa lâu, nhưng tớ vẫn mong rằng sự gặp gỡ này sẽ là một điều thật đẹp. Chúc Minh Thư luôn giữ được sự chân thành, nét đáng yêu của riêng mình và gặp được thật nhiều người tốt trên hành trình phía trước. Tuổi mới thật rực rỡ nhé, mong những điều dịu dàng và may mắn nhất sẽ đến với cậu! 🌷✨
+            </p>
+          </div>
+          <div class="wishes-footer">
+            <div class="signature">
+              <span>Người bạn mới quen thân thương ✨</span>
+            </div>
+            <button id="copy-wish-btn" class="text-link-btn" title="Sao chép lời chúc">
+              📋 Sao chép lời chúc
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thẻ Chỉ Số Vui Nhộn Về Minh Thư (Fun Stats Profile) -->
+      <div class="fun-stats-container">
+        <div class="fun-stat-card glass-card">
+          <div class="stat-emoji">✨</div>
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Xinh đẹp &amp; Đáng yêu</div>
+          <div class="stat-desc">Đặc biệt tỏa sáng mỗi khi cười tươi</div>
+        </div>
+        <div class="fun-stat-card glass-card">
+          <div class="stat-emoji">🍕</div>
+          <div class="stat-value">Không giới hạn</div>
+          <div class="stat-label">Đam mê ăn uống &amp; du lịch</div>
+          <div class="stat-desc">Sẵn sàng lập team quẩy mọi lúc mọi nơi</div>
+        </div>
+        <div class="fun-stat-card glass-card">
+          <div class="stat-emoji">🚀</div>
+          <div class="stat-value">9999+</div>
+          <div class="stat-label">Năng lượng tích cực</div>
+          <div class="stat-desc">Luôn là người bạn tuyệt vời số 1</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         PHẦN 3: BỨC THƯ / THIỆP CHÚC MỪNG
+         ============================================== -->
+    <section id="letter-section" class="content-section">
+      <div class="section-header">
+        <span class="tag-pill">✉️ Bức thư tay bí mật</span>
+        <h2>Tấm Thiệp Nhắn Nhủ</h2>
+        <p>Bấm mở phong bì để xem thông điệp đặc biệt nhé!</p>
+      </div>
+
+      <div class="envelope-container">
+        <!-- Phong bì thư tương tác -->
+        <div class="envelope-card glass-card" id="envelope-box">
+          <div class="envelope-visual">
+            <div class="envelope-top" id="envelope-flap"></div>
+            <div class="envelope-pocket">
+              <div class="envelope-stamp">⭐</div>
+            </div>
+          </div>
+
+          <!-- Tấm thiệp trượt ra -->
+          <div class="letter-paper" id="letter-paper">
+            <div class="letter-inner">
+              <div class="letter-top-deco">🎈 🎁 🎈</div>
+              <h4>Hê nhô Minh Thư! 👋</h4>
+              <p>
+                Vậy là hôm nay Minh Thư chính thức bước sang một tuổi mới rồi nè! 🎂 Chúc cậu có một ngày sinh nhật thật vui vẻ, nhận được thật nhiều lời chúc dễ thương và luôn có những người tuyệt vời bên cạnh. Mong tuổi mới sẽ mang đến cho cậu nhiều cơ hội mới, nhiều trải nghiệm thú vị và cả những điều bất ngờ mà cậu chưa từng nghĩ tới.
+              </p>
+              <p class="letter-highlight">
+                "Tuổi mới chúc Minh Thư luôn vui vẻ, đủ mạnh mẽ để vượt qua những ngày khó khăn, đủ kiên trì để theo đuổi điều mình muốn và đủ may mắn để gặp được những điều tốt đẹp trên hành trình của mình." ✨
+              </p>
+              <p>
+                Dù chúng mình mới quen nhau, tớ vẫn rất vui vì có cơ hội biết đến cậu. Hy vọng thời gian tới chúng mình sẽ có thêm nhiều dịp trò chuyện, đi ăn, đi chơi và góp nhặt thêm những kỷ niệm vui vẻ nhé! Chúc mọi dự định của cậu đều thuận lợi, học tập thật tốt và lúc nào cũng giữ được năng lượng tích cực của riêng mình.
+              </p>
+              <p class="letter-ending">
+                Sinh nhật vui vẻ nha Minh Thư! Chúc cậu tuổi mới thật rực rỡ, nhiều niềm vui, nhiều thành công và luôn gặp những người chân thành! 🎂🎉
+              </p>
+              <div class="letter-sign">~ Ký tên: Một người bạn mới quen 🌷</div>
+            </div>
+          </div>
+
+          <div class="envelope-action">
+            <button id="toggle-letter-btn" class="action-btn letter-btn">
+              <span id="letter-btn-icon">📩</span> <span id="letter-btn-text">Đọc lời nhắn</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         PHẦN ĐẶC BIỆT: RÚT QUẺ VẬN MAY TUỔI MỚI (MINI GAME)
+         ============================================== -->
+    <section id="fortune-section" class="content-section">
+      <div class="section-header">
+        <span class="tag-pill">🔮 Trò chơi vui nhộn</span>
+        <h2>Rút Quẻ May Mắn Tuổi Mới 🔮</h2>
+        <p>Xem vũ trụ gửi thông điệp siêu đỉnh nào đến cho Minh Thư nha!</p>
+      </div>
+
+      <div class="fortune-box glass-card">
+        <div class="fortune-icon-anim" id="fortune-icon-box">🎁</div>
+        <h3 id="fortune-title" class="fortune-title">Quẻ Vận Mệnh Tuổi Mới Đang Chờ...</h3>
+        <p id="fortune-text" class="fortune-text">Nhấn vào nút bên dưới để rút quẻ may mắn độc quyền dành riêng cho Minh Thư!</p>
+        
+        <button id="draw-fortune-btn" class="primary-btn fortune-btn pulse-glow">
+          <span class="btn-emoji">✨</span> Rút quẻ may mắn ngay!
+        </button>
+        <span class="fortune-counter-hint" id="fortune-counter-hint">Đã chuẩn bị sẵn nhiều quẻ siêu hài hước, rút bao nhiêu lần cũng được! 😆</span>
+      </div>
+    </section>
+
+
+
+    <!-- ==============================================
+         PHẦN 5: BẤT NGỜ CUỐI CÙNG
+         ============================================== -->
+    <section id="surprise-section" class="content-section">
+      <div class="surprise-banner glass-card">
+        <div class="surprise-icon-wrapper">
+          <span class="floating-gift">🎁</span>
+        </div>
+        <h2>Vẫn Còn Một Điều Chưa Bật Mí...</h2>
+        <p>Đừng vội tắt trang web, hãy bấm vào nút bên dưới để nhận nốt điều bí mật nhé!</p>
+        
+        <button id="surprise-btn" class="primary-btn surprise-trigger-btn">
+          <span>Bấm vào đây để nhận thêm một bất ngờ 🎉</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==============================================
+       MODAL THÔNG ĐIỆP BẤT NGỜ
+       ============================================== -->
+  <div id="surprise-modal" class="modal-backdrop" aria-hidden="true" role="dialog">
+    <div class="modal-dialog glass-card">
+      <button id="modal-close-btn" class="modal-close-btn" aria-label="Đóng cửa sổ">&times;</button>
+      <div class="modal-header">
+        <div class="surprise-party-popper">🎉 🥳 🎊</div>
+        <h3 id="surprise-modal-title">Bí Mật Đã Được Bật Mí!</h3>
+      </div>
+      <div class="modal-content">
+        <div class="funny-quote-box">
+          <p class="surprise-main-quote" id="surprise-quote-text">
+            "Quà thì chưa biết có không, nhưng lời chúc là chân thành nha! 😂"
+          </p>
+        </div>
+        <p class="surprise-subtext" id="surprise-subtext">
+          Mong rằng hôm nay bạn nhận được thật nhiều quà, ăn bánh kem ngập họng và có một ngày sinh nhật thật trọn vẹn bên những người thân yêu! 🎂✨
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-shoot-confetti" class="action-btn">Bắn thêm pháo hoa giấy 🎊</button>
+        <button id="modal-confirm-btn" class="secondary-btn">Nhận tấm lòng này luôn! 😎</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       FOOTER
+       ============================================== -->
+  <footer class="page-footer">
+    <p>Thiết kế với tất cả sự chân thành &amp; tình bạn vui vẻ ✨</p>
+    <p class="footer-sub">Chúc bạn sinh nhật vui vẻ và có một năm rực rỡ nhất! 🎈</p>
+  </footer>
+
+  <!-- Tệp Javascript xử lý tương tác, hiệu ứng và âm nhạc -->
+  <script src="script.js"></script>
+</body>
+</html>
